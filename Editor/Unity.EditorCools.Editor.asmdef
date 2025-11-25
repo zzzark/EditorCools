@@ -1,0 +1,18 @@
+{
+    "name": "Unity.EditorCools.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:928a2a89756562847a7b82e6208b2cee"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

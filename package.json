@@ -1,0 +1,14 @@
+{
+  "name": "com.datsfain.editorcools",
+  "displayName": "EditorCools",
+  "description": "Collection of Unity Editor tools: dropdowns, sliders, and method buttons.",
+
+  "version": "1.0.0",
+
+  "samples": [
+    {
+      "displayName": "Demo",
+      "path": "Samples~/"
+    }
+  ]
+}
