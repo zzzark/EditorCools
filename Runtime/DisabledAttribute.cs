@@ -1,71 +1,82 @@
-﻿using System;
-using System.Reflection;
-using UnityEditor;
-using UnityEngine;
-
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-public class DisabledAttribute : PropertyAttribute
+﻿namespace EditorCools
 {
-    public enum MethodLocation { PropertyClass, StaticClass }
-    public MethodLocation Location { get; private set; }
-    public string MethodName { get; private set; }
-    public Type MethodOwnerType { get; private set; }
+    using System;
+    using System.Reflection;
+    using UnityEngine;
 
-    public bool? DirectValue { get; private set; }
-
-    public DisabledAttribute(string methodName)
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    public class DisabledAttribute : PropertyAttribute
     {
-        Location = MethodLocation.PropertyClass;
-        MethodName = methodName;
-    }
+        public enum MethodLocation { PropertyClass, StaticClass }
+        public MethodLocation Location { get; private set; }
+        public string MethodName { get; private set; }
+        public Type MethodOwnerType { get; private set; }
 
-    public DisabledAttribute(Type methodOwner, string methodName)
-    {
-        Location = MethodLocation.StaticClass;
-        MethodOwnerType = methodOwner;
-        MethodName = methodName;
-    }
+        public bool? DirectValue { get; private set; }
 
-    public DisabledAttribute(bool directValue = true)
-    {
-        DirectValue = directValue;
-    }
-
-    public bool? GetDisabled(SerializedProperty property, Type objectType)
-    {
-        if (DirectValue != null)
+        public DisabledAttribute(string methodName)
         {
-            return DirectValue;
+            Location = MethodLocation.PropertyClass;
+            MethodName = methodName;
         }
 
-        var methodName = MethodName;
-
-        var methodOwnerType = Location == MethodLocation.PropertyClass ? objectType : MethodOwnerType;
-
-        var methodInfo = methodOwnerType.GetMethod
-            (methodName,
-            BindingFlags.NonPublic
-            | BindingFlags.Public
-            | BindingFlags.Static
-            | BindingFlags.Instance);
-
-        if (methodInfo == null)
+        public DisabledAttribute(Type methodOwner, string methodName)
         {
-            Debug.LogError($"Method {methodName} In {methodOwnerType.FullName} Could Not Be Found!");
-            return null;
+            Location = MethodLocation.StaticClass;
+            MethodOwnerType = methodOwner;
+            MethodName = methodName;
         }
 
-        var methodInfoReturnValueIsStringArray = methodInfo.ReturnType == typeof(bool);
-        if (!methodInfoReturnValueIsStringArray)
+        public DisabledAttribute(bool directValue = true)
         {
-            Debug.LogError($"Method {methodName} In {methodOwnerType.FullName} Does Not Have A Return Type Of {typeof(bool).FullName}");
-            return null;
+            DirectValue = directValue;
         }
 
-        var invokeReference = Location == MethodLocation.StaticClass ? null : property.serializedObject.targetObject;
+        public bool? GetDisabled(object propertyObj, Type objectType)
+        {
+#if UNITY_EDITOR
+            if (propertyObj is not UnityEditor.SerializedProperty property)
+            {
+                return false;
+            }
 
-        var returnValue = methodInfo.Invoke(invokeReference, null) as bool?;
+            if (DirectValue != null)
+            {
+                return DirectValue;
+            }
 
-        return returnValue;
+            var methodName = MethodName;
+
+            var methodOwnerType = Location == MethodLocation.PropertyClass ? objectType : MethodOwnerType;
+
+            var methodInfo = methodOwnerType.GetMethod
+                (methodName,
+                BindingFlags.NonPublic
+                | BindingFlags.Public
+                | BindingFlags.Static
+                | BindingFlags.Instance);
+
+            if (methodInfo == null)
+            {
+                Debug.LogError($"Method {methodName} In {methodOwnerType.FullName} Could Not Be Found!");
+                return null;
+            }
+
+            var methodInfoReturnValueIsStringArray = methodInfo.ReturnType == typeof(bool);
+            if (!methodInfoReturnValueIsStringArray)
+            {
+                Debug.LogError($"Method {methodName} In {methodOwnerType.FullName} Does Not Have A Return Type Of {typeof(bool).FullName}");
+                return null;
+            }
+
+            var invokeReference = Location == MethodLocation.StaticClass ? null : property.serializedObject.targetObject;
+
+            var returnValue = methodInfo.Invoke(invokeReference, null) as bool?;
+
+            return returnValue;
+#else
+            return false;
+#endif
+        }
     }
 }

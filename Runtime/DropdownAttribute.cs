@@ -1,24 +1,28 @@
-using System;
-using UnityEngine;
-
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-public class DropdownAttribute : PropertyAttribute
+namespace EditorCools
 {
-    public enum MethodLocation { PropertyClass, StaticClass }
-    public MethodLocation Location { get; private set; }
-    public string MethodName { get; private set; }
-    public Type MethodOwnerType { get; private set; }
+    using System;
+    using UnityEngine;
 
-    public DropdownAttribute(string methodName)
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    public class DropdownAttribute : PropertyAttribute
     {
-        Location = MethodLocation.PropertyClass;
-        MethodName = methodName;
-    }
+        public enum MethodLocation { PropertyClass, StaticClass }
+        public MethodLocation Location { get; private set; }
+        public string MethodName { get; private set; }
+        public Type MethodOwnerType { get; private set; }
 
-    public DropdownAttribute(Type methodOwner, string methodName)
-    {
-        Location = MethodLocation.StaticClass;
-        MethodOwnerType = methodOwner;
-        MethodName = methodName;
+        public DropdownAttribute(string methodName)
+        {
+            Location = MethodLocation.PropertyClass;
+            MethodName = methodName;
+        }
+
+        public DropdownAttribute(Type methodOwner, string methodName)
+        {
+            Location = MethodLocation.StaticClass;
+            MethodOwnerType = methodOwner;
+            MethodName = methodName;
+        }
     }
+        
 }

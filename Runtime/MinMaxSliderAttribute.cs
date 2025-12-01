@@ -1,15 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class MinMaxSliderAttribute : PropertyAttribute
+namespace EditorCools
 {
-    public float Min;
-    public float Max;
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-    public MinMaxSliderAttribute(float min, float max)
+    public class MinMaxSliderAttribute : PropertyAttribute
     {
-        Min = min;
-        Max = max;
+        public float Min;
+        public float Max;
+
+        public MinMaxSliderAttribute(float min, float max)
+        {
+            Min = min;
+            Max = max;
+        }
     }
 }
